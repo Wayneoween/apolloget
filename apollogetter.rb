@@ -13,6 +13,26 @@ require 'rubygems'
 # http://www.apolloarchive.com/apg_thumbnail-test.php?ptr=1&imageID=<IMGNAME>
 # to get the frame content where I can choose to download Standard or
 # sometimes high resolution images.
+#
+# URL Schemes:
+# Pre-Apollo:		http://www.hq.nasa.gov/office/pao/History/alsj/mercgem/mg-#{imgname}.jpg
+# Early-Apollo:		http://www.hq.nasa.gov/office/pao/History/alsj/misc/apmisc-#{imgname}.jpg
+# Apollo 1:			http://www.hq.nasa.gov/office/pao/History/alsj/a410/ap1-#{imgname}.jpg
+# Apollo 7:			http://www.hq.nasa.gov/office/pao/History/alsj/a410/ap7-#{imgname}.jpg
+# Apollo 8:			http://www.hq.nasa.gov/office/pao/History/alsj/a410/ap8-#{imgname}.jpg
+# Apollo 9:			http://www.hq.nasa.gov/office/pao/History/alsj/a410/ap9-#{imgname}.jpg
+# Apollo 10:		http://www.hq.nasa.gov/office/pao/History/alsj/a410/ap10-#{imgname}.jpg
+# Apollo 11:		http://www.hq.nasa.gov/office/pao/History/alsj/a11/ap11-#{imgname}.jpg
+# Apollo 12:		http://www.hq.nasa.gov/office/pao/History/alsj/a12/ap12-#{imgname}.jpg
+# Apollo 13:		http://www.hq.nasa.gov/office/pao/History/alsj/a13/ap13-#{imgname}.jpg
+# Apollo 14:		http://www.hq.nasa.gov/office/pao/History/alsj/a14/ap14-#{imgname}.jpg
+# Apollo 15:		http://www.hq.nasa.gov/office/pao/History/alsj/a15/ap15-#{imgname}.jpg
+# Apollo 16:		http://www.hq.nasa.gov/office/pao/History/alsj/a16/ap16-#{imgname}.jpg
+# Apollo 17:		http://www.hq.nasa.gov/office/pao/History/alsj/a17/ap17-#{imgname}.jpg
+#
+# I tested only the first and the last image for the name, but found out, that in between
+# there are images with AS16-#{imgname}.jpg, too...
+
 
 class ApolloGetter
   url = "http://www.apolloarchive.com/apollo_gallery.html"
