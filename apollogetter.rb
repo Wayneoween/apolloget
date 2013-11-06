@@ -30,7 +30,7 @@ require 'rubygems'
 # Apollo 16:		http://www.hq.nasa.gov/office/pao/History/alsj/a16/ap16-#{imgname}.jpg
 # Apollo 17:		http://www.hq.nasa.gov/office/pao/History/alsj/a17/ap17-#{imgname}.jpg
 #
-# I tested only the first and the last image for the name, but found out, that in between
+# XXX: I tested only the first and the last image for the name, but found out, that in between
 # there are images with AS16-#{imgname}.jpg, too...
 
 
@@ -43,9 +43,12 @@ class ApolloGetter
   # imageID is the name, but is irrellavant and not always
   # the real file name!
   imgpreurl = "http://www.apolloarchive.com/apg_thumbnail-test.php?ptr="
+  imggeturl = "http://www.hq.nasa.gov/office/pao/History/alsj/"
 
   linknames = []
   imgnames = []
+  geturls = []
+
   a = Mechanize.new
   a.get(url) do |hp|
     selector = a.click(hp.frame_with(:src => "apg_selector.html").click)
@@ -73,8 +76,17 @@ class ApolloGetter
     # I like to use this count to verify that I got
     # all names
 
+	# Now I have to know somehow which apollo mission I clicked on
+	# Also HighRes images do end with *HR.jpg, I want these instead of
+	# standard resolution.
+	imgnames.each do |l|
+		geturls << imggeturl + "a410/ap1-" + "#{l}.jpg"
+	end
+
     pp table
     pp imgnames
     pp linknames
+    pp geturls
+
   end
 end
