@@ -80,7 +80,15 @@ class ApolloGetter
 	# Also HighRes images do end with *HR.jpg, I want these instead of
 	# standard resolution.
 	imgnames.each do |l|
-		geturls << imggeturl + "a410/ap1-" + "#{l}.jpg"
+		if l.downcase.match(/^ap\d/)
+			l = l.downcase.gsub(/id/, "ID")
+			geturls << imggeturl + "a410/" + "#{l}.jpg"
+		else
+			if l.match(/ID/)
+				l = l.downcase.gsub(/id/, "ID")
+			end
+			geturls << imggeturl + "a410/ap1-" + "#{l}.jpg"
+		end
 	end
 
     pp table
