@@ -37,13 +37,12 @@ require 'rubygems'
 class ApolloGetter
   url = "http://www.apolloarchive.com/apollo_gallery.html"
   tableurl = "http://www.apolloarchive.com/apg_subject_index-test.php?gallery="
+  img_base_url = "http://www.hq.nasa.gov/office/pao/History/alsj/"
 
-  # This is context sensitive!
-  # ptr is the image number of the album
-  # imageID is the name, but is irrellavant and not always
-  # the real file name!
-  imgpreurl = "http://www.apolloarchive.com/apg_thumbnail-test.php?ptr="
-  imggeturl = "http://www.hq.nasa.gov/office/pao/History/alsj/"
+  preapollo = ['mg', 'apmisc']
+  premoon = ['ap1', 'ap7', 'ap8', 'ap9', 'ap10']
+  moon = ['ap11', 'ap12', 'ap13', 'ap14', 'ap15', 'ap16', 'ap17']
+  postapollo = []
 
   linknames = []
   imgnames = []
@@ -61,6 +60,7 @@ class ApolloGetter
     # XXX: Get rid of search and magazines link
     linknames.pop(2)
 
+	# Get Apollo1 link table
     table = a.get(tableurl+"1")
     table.links.each do |l|
       # probably better to use the href
@@ -82,12 +82,12 @@ class ApolloGetter
 	imgnames.each do |l|
 		if l.downcase.match(/^ap\d/)
 			l = l.downcase.gsub(/id/, "ID")
-			geturls << imggeturl + "a410/" + "#{l}.jpg"
+			geturls << img_base_url + "a410/" + "#{l}.jpg"
 		else
 			if l.match(/ID/)
 				l = l.downcase.gsub(/id/, "ID")
 			end
-			geturls << imggeturl + "a410/ap1-" + "#{l}.jpg"
+			geturls << img_base_url + "a410/ap1-" + "#{l}.jpg"
 		end
 	end
 
