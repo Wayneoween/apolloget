@@ -1,5 +1,6 @@
 require 'mechanize'
 require 'rubygems'
+require "net/http"
 
 # This thing sucks a bit, because I don't want to use selenium
 # for clicking JS links.
@@ -96,5 +97,15 @@ class ApolloGetter
     pp linknames
     pp geturls
 
+	# Just to see if there are all images available that we found
+	# Worst case for HighRes images: test if regex on u "*HR.jpg" returns a 200 too
+	# counter = 0
+	# geturls.each do |u|
+	#	url = URI.parse(u)
+	#	req = Net::HTTP.new(url.host, url.port)
+	#	res = req.request_head(url.path)
+	#	counter += 1 if res.code == "200"
+	# end
+	
   end
 end
