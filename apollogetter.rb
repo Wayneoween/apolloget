@@ -51,6 +51,7 @@ class ApolloGetter
 
   a = Mechanize.new
   a.get(url) do |hp|
+
     selector = a.click(hp.frame_with(:src => "apg_selector.html").click)
 
     # Get all links in a
@@ -61,7 +62,7 @@ class ApolloGetter
     # XXX: Get rid of search and magazines link
     linknames.pop(2)
 
-	# Get Apollo1 link table
+    # Get Apollo1 link table
     table = a.get(tableurl+"1")
     table.links.each do |l|
       # probably better to use the href
@@ -77,35 +78,37 @@ class ApolloGetter
     # I like to use this count to verify that I got
     # all names
 
-	# Now I have to know somehow which apollo mission I clicked on
-	# Also HighRes images do end with *HR.jpg, I want these instead of
-	# standard resolution.
-	imgnames.each do |l|
-		if l.downcase.match(/^ap\d/)
-			l = l.downcase.gsub(/id/, "ID")
-			geturls << img_base_url + "a410/" + "#{l}.jpg"
-		else
-			if l.match(/ID/)
-				l = l.downcase.gsub(/id/, "ID")
-			end
-			geturls << img_base_url + "a410/ap1-" + "#{l}.jpg"
-		end
-	end
+    # Now I have to know somehow which apollo mission I clicked on
+    # Also HighRes images do end with *HR.jpg, I want these instead of
+    # standard resolution.
+    imgnames.each do |l|
+      if l.downcase.match(/^ap\d/)
+        l = l.downcase.gsub(/id/, "ID")
+        geturls << img_base_url + "a410/" + "#{l}.jpg"
+      elsif l.downcase.match(/^as\d\d/)
+        # fix da URL
+      else
+        if l.match(/ID/)
+          l = l.downcase.gsub(/id/, "ID")
+        end
+        geturls << img_base_url + "a410/ap1-" + "#{l}.jpg"
+      end
+    end
 
     pp table
     pp imgnames
     pp linknames
     pp geturls
 
-	# Just to see if there are all images available that we found
-	# Worst case for HighRes images: test if regex on u "*HR.jpg" returns a 200 too
-	# counter = 0
-	# geturls.each do |u|
-	#	url = URI.parse(u)
-	#	req = Net::HTTP.new(url.host, url.port)
-	#	res = req.request_head(url.path)
-	#	counter += 1 if res.code == "200"
-	# end
-	
+    # Just to see if there are all images available that we found
+    # Worst case for HighRes images: test if regex on u "*HR.jpg" returns a 200 too
+    # counter = 0
+    # geturls.each do |u|
+    #	url = URI.parse(u)
+    #	req = Net::HTTP.new(url.host, url.port)
+    #	res = req.request_head(url.path)
+    #	counter += 1 if res.code == "200"
+    # end
+
   end
 end
