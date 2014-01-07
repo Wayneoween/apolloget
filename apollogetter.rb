@@ -73,25 +73,15 @@ class ApolloGetter
       binding.pry
       resolutionlist.each do |single_image_frame|
         binding.pry
-        if a.get(single_image_frame).links_with(:text => "Hi-Res") != []
+        if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
           binding.pry
-          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").href
-        elsif a.get(single_image_frame).links_with(:text => "Standard") != []
+          # XXX: Broken: apollogetter.rb:79:in `[]': no implicit conversion of String into Integer (TypeError)
+          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").first.href
+        elsif a.get(single_image_frame).links_with(:text => "Standard").any?
           binding.pry
-          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Standard").href
+          # XXX: Broken: apollogetter.rb:83:in `[]': no implicit conversion of String into Integer (TypeError)
+          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Standard").first.href
         end
-
-
-#          if link.href.match(/http.*jpg/)
-#            if link.text == "Hi-Res"
-#              geturls[mission] << link.href.gsub(/http.*jpg/).first
-#              puts "High-Res: #{geturls[mission].last}"
-#            else
-#              geturls[mission] << link.href.gsub(/http.*jpg/).first
-#              puts "Standard-Res: #{geturls[mission].last}"
-#            end
-#          end
-#        end
       end
     end
   end
