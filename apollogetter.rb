@@ -16,7 +16,8 @@ class ApolloGetter
   url = "http://www.apolloarchive.com/apollo_gallery.html"
   tableurl = "http://www.apolloarchive.com/apg_subject_index-test.php?gallery="
 
-  # http://www.apolloarchive.com/apg_thumbnail-test.php?ptr=<img id>&imageID=<name>
+  # http://www.apolloarchive.com/
+  #   apg_thumbnail-test.php?ptr=<img id>&imageID=<name>
   dlurl = "http://www.apolloarchive.com/apg_thumbnail-test.php?ptr="
   dlurl_post = "&imageID="
 
@@ -42,7 +43,7 @@ class ApolloGetter
   a.get(url) do |hp|
     selector = a.click(hp.frame_with(:src => "apg_selector.html").click)
 
-    # Get all JS Apollo mission links from the overview frame in the upper left...
+    # Get all JS Apollo mission links from the overview frame in the upper left
     selector.links.each do |l|
       # ... but not the search and magazines link
       unless l.href.match(/search|by_magazin/)
@@ -82,14 +83,17 @@ class ApolloGetter
       # XXX: Reset content, otherwise it seems to get confused with old content
       a.reset
 
-      # Get every site in resolutionlist and if it has a high res image linked, get this
-      # otherwise get the standard resolution one
-      # XXX: This is slow, maybe use different proxies for every request, threading
+      # Get every site in resolutionlist and if it has a high res image linked,
+      # get this otherwise get the standard resolution one
+      # XXX: This is slow, maybe use different proxies for every request,
+      #      threading
       resolutionlist.each do |single_image_frame|
         if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
-          geturls[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").first.href.to_s
+          geturls[mission] << a.get(single_image_frame)
+            .links_with(:text => "Hi-Res").first.href.to_s
         elsif a.get(single_image_frame).links_with(:text => "Standard").any?
-          geturls[mission] << a.get(single_image_frame).links_with(:text => "Standard").first.href.to_s
+          geturls[mission] << a.get(single_image_frame)
+            .links_with(:text => "Standard").first.href.to_s
         end
       end
 
@@ -100,7 +104,7 @@ class ApolloGetter
       # download itself will take some time that one request of that address
       # is allowed once more.
 
-      # TODO: Create gallery to easily show the images (with link to the Archive?)
+      # TODO: Create gallery to easily show the images with link to the Archive?
 
     end
   end
