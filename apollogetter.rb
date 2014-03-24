@@ -65,23 +65,22 @@ class ApolloGetter
       puts mission
       puts "Getting Frames for each image..."
       image_table.each_with_index do |image_name, index|
-        print "."
         resolutionlist << dlurl + "#{index+1}" + dlurl_post + image_name
       end
       puts " #{resolutionlist.size}"
       puts "Deeplink or not?"
-      binding.pry
+
+      # Reset content, otherwise it seems to get confused with old content
+      a.reset
+      # Get every site in resolutionlist and if it has a high res image linked, get this
+      # otherwise get the standard res one
       resolutionlist.each do |single_image_frame|
-        binding.pry
         if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
-          binding.pry
-          # XXX: Broken: apollogetter.rb:79:in `[]': no implicit conversion of String into Integer (TypeError)
-          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").first.href
+          geturls[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").first.href.to_s
         elsif a.get(single_image_frame).links_with(:text => "Standard").any?
-          binding.pry
-          # XXX: Broken: apollogetter.rb:83:in `[]': no implicit conversion of String into Integer (TypeError)
-          resolutionlist[mission] << a.get(single_image_frame).links_with(:text => "Standard").first.href
+          geturls[mission] << a.get(single_image_frame).links_with(:text => "Standard").first.href.to_s
         end
+        puts geturls
       end
     end
   end
