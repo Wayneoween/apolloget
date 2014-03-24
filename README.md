@@ -1,4 +1,4 @@
-apolloget - a script for downloaing images from the NASA Archive
+apolloget - download images from the NASA Archive
 ====================
 
 ## Why
