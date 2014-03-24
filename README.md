@@ -22,7 +22,7 @@ linked to the site, they even __closed down__ for a week due to
 ## Problems
 
 As I mentioned before there is a serverside barrier that allows new images to
-be downloaded only every two seconds.
+be downloaded only every two seconds which renders this pretty useless.
 
 I haven't come around to adress this yet.
 
@@ -30,3 +30,7 @@ This is a problem on two fronts since I need to get the image deeplink first
 (this is where the frames are the problem) and after that I can download it.
 
 So its **fucking SLOW**
+
+## Other bugs
+
+It says there are no images to be indexed under the Saturn V mission, which is wrong.

@@ -1,3 +1,12 @@
+# Author: Marius Schuller
+# MIT License, (c) 2014
+#
+# TODO:
+# - Make it useable
+# - Make it use threads
+# - Make it use proxies?
+# - Make mission selectable (e.g. "Only Apollo 1 please!")
+
 require 'mechanize'
 require 'rubygems'
 require 'net/http'
@@ -24,64 +33,75 @@ class ApolloGetter
   mission_images = {}
 
   # hash with the names as key, value is array of imgname
-  pp "Initializing hashes mission_images & geturls..."
   missions.each_key do |name|
     mission_images[name] = []
     geturls[name] = []
   end
 
-  pp "Starting mechanize..."
   a = Mechanize.new
   a.get(url) do |hp|
     selector = a.click(hp.frame_with(:src => "apg_selector.html").click)
 
-    # Get all JS links from the Apollo overview
+    # Get all JS Apollo mission links from the overview frame in the upper left...
     selector.links.each do |l|
-      # Just get the missions names
-      linknames << l.href.match(/\(\'(.+)\',/)[1]
+      # ... but not the search and magazines link
+      unless l.href.match(/search|by_magazin/)
+        linknames << l.href.match(/\(\'(.+)\',/)[1]
+      end
     end
-
-    # XXX: Get rid of search and magazines link
-    linknames.pop(2)
 
     puts "Getting mission_images!"
     missions.each do |name, folder_name|
-      print "For #{name}"
+      print "Searching for mission #{name}... "
       table[name] = a.get(tableurl+folder_name)
       table[name].links.each do |link|
-        print "."
         mission_images[name] << link.text
       end
-      # XXX: Get rid of not-image-links
+
+      # Get rid of not-image-links
       mission_images[name].pop(6)
-      puts " #{mission_images[name].size}"
+      unless mission_images[name].size == 0
+        puts "found #{mission_images[name].size} images!"
+      else
+        # XXX: Nothing is found for Saturn V
+        puts "nothing found!"
+      end
     end
 
-    #This is very slow (probably because they allow requests only every 2 secs)
-    #also it is broken because it finds images more than once and doesn't detect
-    #HR images safely
-    puts "Searching for deeplinks and highres images..."
+    #This is very slow (because they allow requests only every 2 secs)
+    puts "Looking up deeplinks for downloading..."
     mission_images.each do |mission, image_table|
       puts mission
-      puts "Getting Frames for each image..."
+      # Get each images own frame from the upper right if clicked in the table
       image_table.each_with_index do |image_name, index|
         resolutionlist << dlurl + "#{index+1}" + dlurl_post + image_name
       end
-      puts " #{resolutionlist.size}"
-      puts "Deeplink or not?"
 
-      # Reset content, otherwise it seems to get confused with old content
+      puts " #{resolutionlist.size}"
+
+      # XXX: Reset content, otherwise it seems to get confused with old content
       a.reset
+
       # Get every site in resolutionlist and if it has a high res image linked, get this
-      # otherwise get the standard res one
+      # otherwise get the standard resolution one
+      # XXX: This is slow, maybe use different proxies for every request, threading
       resolutionlist.each do |single_image_frame|
         if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
           geturls[mission] << a.get(single_image_frame).links_with(:text => "Hi-Res").first.href.to_s
         elsif a.get(single_image_frame).links_with(:text => "Standard").any?
           geturls[mission] << a.get(single_image_frame).links_with(:text => "Standard").first.href.to_s
         end
-        puts geturls
       end
+
+      # Requests to the Archive are limited to one every two seconds, that I am
+      # not able to fill the resolutionlist and begin downloading images from
+      # it.
+      # Either I have to proxy every second or third request because the
+      # download itself will take some time that one request of that address
+      # is allowed once more.
+
+      # TODO: Create gallery to easily show the images (with link to the Archive?)
+
     end
   end
 end
