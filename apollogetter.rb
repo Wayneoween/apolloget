@@ -112,12 +112,12 @@ class ApolloGetter
       # Either I have to proxy every second or third request because the
       # download itself will take some time that one request of that address
       # is allowed once more.
-
     end
 
     missions.each do |mission, folder|
+      # Don't write a file when there is nothing to write into it
       next if geturls[mission].size == 0
-      urlfile = File.new("#{mission}-urls.txt", "w")
+      urlfile = File.new("links/#{mission}/urls.txt", "w")
       puts "Writing links to file..."
       if urlfile
         geturls[mission].each do |u|

@@ -1,0 +1,54 @@
+digraph G {
+
+  node [shape=box];
+
+  Start -> "Get apollo gallery";
+  "Get apollo gallery" -> "Scrape mission selector-frame (upper left)";
+  "Scrape mission selector-frame (upper left)" -> "For every link there";
+  "For every link there" -> "Get next link";
+  "Get next link" -> "Matches 'search' or 'by_magazine'?";
+  "Matches 'search' or 'by_magazine'?" -> "Get next link" [label="yes"];
+  "Matches 'search' or 'by_magazine'?" -> "Add link to array linknames" [label="no"];
+  "Add link to array linknames" -> "Links left in selector-frame?";
+  "Links left in selector-frame?" -> "Get next link" [label="yes"];
+  "Links left in selector-frame?" -> "For every linknames entry" [label="no"];
+  "For every linknames entry" -> "Get link table (lower mid)";
+  "Get link table (lower mid)" -> "Scrape links to mission_images";
+  "Scrape links to mission_images" -> "Remove last 6 links";
+  "Remove last 6 links" -> "Next linknames entry exists?";
+  "Next linknames entry exists?" -> "Get next linknames entry" [label="yes"];
+  "Get next linknames entry" -> "Get link table (lower mid)";
+  "Next linknames entry exists?" -> "mission_images hash is filled" [label="no"];
+  "mission_images hash is filled" -> "For every mission";
+  "For every mission" -> "Build list for resolution selection";
+  "Build list for resolution selection" -> "For every link in this missions list";
+  "For every link in this missions list" -> "Get next frame link (upper right)";
+  "Get next frame link (upper right)" -> "Has HighRes link?";
+  "Has HighRes link?" -> "Use HighRes link" [label="yes"];
+  "Has HighRes link?" -> "Use StandardRes link" [label="no"];
+  "Use HighRes link" -> "Add this deeplink to this missions geturls array";
+  "Use StandardRes link" -> "Add this deeplink to this missions geturls array";
+  "Add this deeplink to this missions geturls array" -> "Exists next link?";
+  "Exists next link?" -> "Get next frame link (upper right)" [label="yes"];
+  "Exists next link?" -> "Exist next mission?" [label="no"];
+  "Exist next mission?" -> "Get next mission" [label="yes"];
+  "Get next mission" -> "Build list for resolution selection";
+  "Exist next mission?" -> "For every mission we know" [label="no"];
+  "For every mission we know" -> "Any deeplinks for this mission?";
+  "Any deeplinks for this mission?" -> "Any mission left?" [label="no"];
+  "Any deeplinks for this mission?" -> "Write urls to file" [label="yes"];
+  "Write urls to file" -> "Any mission left?";
+  "Any mission left?" -> End [label="no"];
+
+  Start [shape=ellipse];
+  End [shape=ellipse];
+
+  "Matches 'search' or 'by_magazine'?" [shape=diamond];
+  "Links left in selector-frame?" [shape=diamond];
+  "Next linknames entry exists?" [shape=diamond];
+  "Has HighRes link?" [shape=diamond];
+  "Exists next link?" [shape=diamond];
+  "Exist next mission?" [shape=diamond];
+  "Any deeplinks for this mission?" [shape=diamond];
+  "Any mission left?" [shape=diamond];
+}
