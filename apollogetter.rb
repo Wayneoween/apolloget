@@ -88,16 +88,25 @@ class ApolloGetter
       # get this otherwise get the standard resolution one
       # XXX: This is slow, maybe use different proxies for every request,
       #      threading
-      resolutionlist.each do |single_image_frame|
-        # TODO: Make interruptible with CRTL+C
-        if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
-          geturls[mission] << a.get(single_image_frame)
+
+      begin
+        resolutionlist.each do |single_image_frame|
+          # TODO: Make interruptible with CRTL+C
+          if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
+            geturls[mission] << a.get(single_image_frame)
             .links_with(:text => "Hi-Res").first.href.to_s
-        elsif a.get(single_image_frame).links_with(:text => "Standard").any?
-          geturls[mission] << a.get(single_image_frame)
+          elsif a.get(single_image_frame).links_with(:text => "Standard").any?
+            geturls[mission] << a.get(single_image_frame)
             .links_with(:text => "Standard").first.href.to_s
+          end
         end
+      rescue SignalException => e
+        puts geturls
+        break
+      rescue Exception => e
+        raise e
       end
+
 
       # Requests to the Archive are limited to one every two seconds, that I am
       # not able to fill the resolutionlist and begin downloading images from
