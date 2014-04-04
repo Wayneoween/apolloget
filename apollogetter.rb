@@ -7,6 +7,7 @@
 # - Make it use proxies?
 # - Make mission selectable (e.g. "Only Apollo 1 please!")
 # - Make it output a list of all URLs, separated by # <mission_name>
+# - Make a easy to use gallery out of downloaded images
 
 require 'mechanize'
 require 'rubygems'
@@ -29,7 +30,6 @@ class ApolloGetter
               'sv' => 'saturnv', 'pa' => 'PA'}
 
   linknames = []
-  resolutionlist = []
   table = {}
   geturls = {}
   mission_images = {}
@@ -70,9 +70,13 @@ class ApolloGetter
       end
     end
 
-    #This is very slow (because they allow requests only every 2 secs)
+    # XXX: Reset content, otherwise it seems to get confused with old content in a
+    a.reset
+
+    # This is very slow (because they allow requests only every 2 secs)
     puts "Looking up deeplinks for downloading..."
     mission_images.each do |mission, image_table|
+      resolutionlist = []
       print mission
       # Get each images own frame from the upper right if clicked in the table
       image_table.each_with_index do |image_name, index|
@@ -81,17 +85,12 @@ class ApolloGetter
 
       puts " #{resolutionlist.size}"
 
-      # XXX: Reset content, otherwise it seems to get confused with old content in a
-      a.reset
-
       # Get every site in resolutionlist and if it has a high res image linked,
       # get this otherwise get the standard resolution one
       # XXX: This is slow, maybe use different proxies for every request,
       #      threading
-
       begin
         resolutionlist.each do |single_image_frame|
-          # TODO: Make interruptible with CRTL+C
           if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
             geturls[mission] << a.get(single_image_frame)
             .links_with(:text => "Hi-Res").first.href.to_s
@@ -100,6 +99,7 @@ class ApolloGetter
             .links_with(:text => "Standard").first.href.to_s
           end
         end
+
       rescue SignalException => e
         puts geturls
         break
@@ -115,18 +115,16 @@ class ApolloGetter
       # download itself will take some time that one request of that address
       # is allowed once more.
 
-      # TODO: Create gallery to easily show the images with link to the Archive?
-
-    end
-
-    urlfile = File.new("#{geturls.first.first}-urls.txt", "w")
-    if urlfile
-      geturls.first.last.each do |u|
-        urlfile.write(u+"\n")
+      urlfile = File.new("#{mission}-urls.txt", "w")
+      if urlfile
+        puts geturls
+        geturls[mission].each do |u|
+          urlfile.write(u+"\n")
+        end
+        urlfile.close
+      else
+        puts "Unable to open file!"
       end
-      urlfile.close
-    else
-      puts "Unable to open file!"
     end
   end
 end
