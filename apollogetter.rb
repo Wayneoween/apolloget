@@ -6,6 +6,7 @@
 # - Make it use threads
 # - Make it use proxies?
 # - Make mission selectable (e.g. "Only Apollo 1 please!")
+# - Make it output a list of all URLs, separated by # <mission_name>
 
 require 'mechanize'
 require 'rubygems'
@@ -72,7 +73,7 @@ class ApolloGetter
     #This is very slow (because they allow requests only every 2 secs)
     puts "Looking up deeplinks for downloading..."
     mission_images.each do |mission, image_table|
-      puts mission
+      print mission
       # Get each images own frame from the upper right if clicked in the table
       image_table.each_with_index do |image_name, index|
         resolutionlist << dlurl + "#{index+1}" + dlurl_post + image_name
@@ -80,7 +81,7 @@ class ApolloGetter
 
       puts " #{resolutionlist.size}"
 
-      # XXX: Reset content, otherwise it seems to get confused with old content
+      # XXX: Reset content, otherwise it seems to get confused with old content in a
       a.reset
 
       # Get every site in resolutionlist and if it has a high res image linked,
@@ -88,6 +89,7 @@ class ApolloGetter
       # XXX: This is slow, maybe use different proxies for every request,
       #      threading
       resolutionlist.each do |single_image_frame|
+        # TODO: Make interruptible with CRTL+C
         if a.get(single_image_frame).links_with(:text => "Hi-Res").any?
           geturls[mission] << a.get(single_image_frame)
             .links_with(:text => "Hi-Res").first.href.to_s
@@ -106,6 +108,16 @@ class ApolloGetter
 
       # TODO: Create gallery to easily show the images with link to the Archive?
 
+    end
+
+    urlfile = File.new("#{geturls.first.first}-urls.txt", "w")
+    if urlfile
+      geturls.first.last.each do |u|
+        urlfile.write(u+"\n")
+      end
+      urlfile.close
+    else
+      puts "Unable to open file!"
     end
   end
 end
