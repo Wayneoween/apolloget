@@ -99,10 +99,8 @@ class ApolloGetter
             .links_with(:text => "Standard").first.href.to_s
           end
         end
-
       rescue SignalException => e
         puts geturls
-        break
       rescue Exception => e
         raise e
       end
@@ -116,8 +114,8 @@ class ApolloGetter
       # is allowed once more.
 
       urlfile = File.new("#{mission}-urls.txt", "w")
+      puts "Writing links to file..."
       if urlfile
-        puts geturls
         geturls[mission].each do |u|
           urlfile.write(u+"\n")
         end
