@@ -101,10 +101,10 @@ class ApolloGetter
         end
       rescue SignalException => e
         puts geturls
+        break
       rescue Exception => e
         raise e
       end
-
 
       # Requests to the Archive are limited to one every two seconds, that I am
       # not able to fill the resolutionlist and begin downloading images from
@@ -113,6 +113,10 @@ class ApolloGetter
       # download itself will take some time that one request of that address
       # is allowed once more.
 
+    end
+
+    missions.each do |mission, folder|
+      next if geturls[mission].size == 0
       urlfile = File.new("#{mission}-urls.txt", "w")
       puts "Writing links to file..."
       if urlfile
